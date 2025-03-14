@@ -11,18 +11,21 @@ std::filesystem::path ResourcePath::get_full_path(const std::filesystem::path &r
     return relative_path;
 }
 
+// get full path (gfp)
 std::filesystem::path ResourcePath::gfp(const std::string &relative_path) const {
     return get_full_path(convert_to_filesystem_path(relative_path));
 }
 
+// get full path string (gfps)
+std::string ResourcePath::gfps(const std::string &relative_path) const {
+    return gfp(relative_path).string();
+}
+
 std::filesystem::path ResourcePath::convert_to_filesystem_path(const std::string &path) {
 #if defined(_WIN32) || defined(_WIN64)
-    // Convert the string to a filesystem path
-    std::filesystem::path fs_path(path);
-    // Normalize the path and convert backslashes to forward slashes
-    std::string normalized_path = fs_path.string();
-    std::replace(normalized_path.begin(), normalized_path.end(), '\\', '/');
-    return std::filesystem::path(normalized_path);
+	auto fp = std::filesystem::path(path);
+	fp.make_preferred();
+    return fp;
 #else
     // For non-Windows systems, just convert to filesystem path directly
     return std::filesystem::path(path);
